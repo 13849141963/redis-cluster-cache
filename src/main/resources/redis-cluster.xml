@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+    <!--这段配置出现冗余,提取出来作为公共配置,
+            abstract为true,代表当前创建的实例,不允许直接使用,抽象的实例,可通过继承使用 -->
+    <bean id="commonNode" class="redis.clients.jedis.HostAndPort" abstract="true">
+        <constructor-arg index="0" name="host" value="192.168.87.129"/>
+    </bean>
+    <bean id="node0" parent="commonNode">
+        <constructor-arg index="1" name="port" value="7000"/>
+    </bean>
+    <bean id="node1" parent="commonNode">
+        <constructor-arg index="1" name="port" value="7001"/>
+    </bean>
+    <bean id="node2" parent="commonNode">
+        <constructor-arg index="1" name="port" value="7002"/>
+    </bean>
+    <bean id="node3" parent="commonNode">
+        <constructor-arg index="1" name="port" value="7003"/>
+    </bean>
+    <bean id="node4" parent="commonNode">
+        <constructor-arg index="1" name="port" value="7004"/>
+    </bean>
+    <bean id="node5" parent="commonNode">
+        <constructor-arg index="1" name="port" value="7005"/>
+    </bean>
+    <bean id="node6" parent="commonNode">
+        <constructor-arg index="1" name="port" value="7006"/>
+    </bean>
+    <bean id="jedisCluster" class="redis.clients.jedis.JedisCluster">
+        <constructor-arg index="0" name="nodes">
+            <set>
+                <ref bean="node0"/>
+                <ref bean="node1"/>
+                <ref bean="node2"/>
+                <ref bean="node3"/>
+                <ref bean="node4"/>
+                <ref bean="node5"/>
+                <ref bean="node6"/>
+            </set>
+        </constructor-arg>
+    </bean>
+
+    <!--配置切面-->
+    <aop:config proxy-target-class="true">
+        <!--配置-->
+        <aop:pointcut id="pc" expression="execution(* com.zy.cn.service.*.*(..))"/>
+        <!--添加缓存-->
+        <aop:advisor advice-ref="redisCacheAdvice" pointcut-ref="pc"/>
+        <!--清除缓存-->
+        <aop:advisor advice-ref="redisFlushCacheAdvice" pointcut-ref="pc"/>
+    </aop:config>
+
+</beans>
