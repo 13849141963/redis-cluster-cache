@@ -19,7 +19,7 @@ public class TestMybeis {
 
     @Test
     public void testInsert() {
-        userService.insert(new User(null, "劳斯莱斯", 18, new Date()));
+        userService.insert(new User(null, "特斯啦", 18, new Date()));
     }
 
     @Test

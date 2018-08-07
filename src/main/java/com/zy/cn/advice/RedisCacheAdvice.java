@@ -5,6 +5,8 @@ import com.zy.cn.annonations.Cache;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.DigestUtils;
 import redis.clients.jedis.JedisCluster;
@@ -45,6 +47,9 @@ public class RedisCacheAdvice implements MethodInterceptor {
         Method method = invocation.getMethod();
         //判断当前执行的目标方法是否存在该类型注解
         if (invocation.getMethod().isAnnotationPresent(Cache.class)) {
+
+
+            //第一种方案:使用JedisCluster对象操作集群
             //判断redis是否存在key
             if (jedisCluster.hexists(mapname, key)) {
                 //存在key
@@ -60,6 +65,8 @@ public class RedisCacheAdvice implements MethodInterceptor {
                 //jedisCluster.set(key,jsonString);
                 jedisCluster.hset(mapname, key, jsonString);
             }
+            //第二种方案
+            //使用spring-data的RedisTemplate对象操作redis集群
         } else {
             //不存在注解放行目标方法
             proceed = invocation.proceed();
