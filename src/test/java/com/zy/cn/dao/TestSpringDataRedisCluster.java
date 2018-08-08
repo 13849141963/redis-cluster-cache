@@ -30,8 +30,6 @@ public class TestSpringDataRedisCluster {
         System.out.println(user1);
         //删除key
         redisTemplate.delete("user");
-
-
     }
 
 
