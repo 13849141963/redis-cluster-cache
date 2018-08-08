@@ -69,8 +69,35 @@ public class TestSpringDataRedisCluster {
         Object o = hashOperations.get("map", "name");
 
         System.out.println(o);
+    }
+    @Test
+    public void testHash(){
+        //spring-data操作redis的hash类型
+        HashOperations hash = redisTemplate.opsForHash();
+        hash.put("users",
+                "com.zy.cn.UserServiceImpl",
+                Arrays.asList(new User(1,"张三",18,new Date()),new User(2,"李四",23,new Date())));
 
+        List<User> users = (List<User>) hash.get("users", "com.zy.cn.UserServiceImpl");
+        for (User user : users) {
+            System.out.println(user);
+        }
 
+        //判断hash是否存在key
+        Boolean users1 = hash.hasKey("users", "com.zy.cn.UserServiceImpl");
+        System.out.println(users1);
+
+        //获取散列中所有的key集合
+        Set<String> users2 = hash.keys("users");
+        for (String s : users2) {
+            System.out.println(s);
+        }
+        //删除的keys集合
+        Long users3 = hash.delete("users", "com.zy.cn.UserServiceImpl");
+        System.out.println(users3);
+
+        Boolean users4 = hash.hasKey("users", "com.zy.cn.UserServiceImpl");
+        System.out.println(users4);
     }
 
 
